@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abhishek Raut — Data Scientist</title>
+<meta name="description" content="Abhishek Raut — Data Science & Analytics. ML pipelines, statistical modelling, published researcher.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #000000;
+    --bg-raised: #0A0A0D;
+    --bg-card: #0E0E12;
+    --ink: #EDEDF0;
+    --ink-dim: #A3A3AD;
+    --slate: #6B6B76;
+    --slate-dim: #3A3A42;
+    --line: #1C1C22;
+    --line-soft: #131316;
+    --accent: #6E5BFF;
+    --accent-soft: #6E5BFF26;
+    --accent-glow: #6E5BFF55;
+    --good: #5FD9A8;
+    --display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+  html{ scroll-behavior: smooth; }
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--display);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection{ background: var(--accent); color: #fff; }
+  a{ color: inherit; text-decoration: none; }
+  .mono{ font-family: var(--mono); }
+
+  /* ambient glow, fixed, very subtle */
+  .glow{
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 900px;
+    height: 600px;
+    background: radial-gradient(ellipse at center, var(--accent-soft) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(40px);
+  }
+
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(14px);
+    background: rgba(0,0,0,0.7);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 20px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .nav-logo{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .nav-logo .dot{
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+  .nav-links{
+    display: flex;
+    gap: 32px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--slate);
+  }
+  .nav-links a{ transition: color 0.2s; }
+  .nav-links a:hover{ color: var(--ink); }
+
+  @media (max-width: 640px){
+    .nav-links{ display: none; }
+  }
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding: 110px 0 90px;
+    position: relative;
+  }
+  .hero-eyebrow{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 32px;
+    padding: 7px 14px;
+    border: 1px solid var(--accent-soft);
+    border-radius: 100px;
+    background: var(--accent-soft);
+  }
+
+  h1.hero-title{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(2.6rem, 5.8vw, 4.6rem);
+    line-height: 1.04;
+    letter-spacing: -0.02em;
+    max-width: 800px;
+    margin-bottom: 28px;
+  }
+  h1.hero-title .accent-text{
+    color: var(--accent);
+  }
+
+  .hero-sub{
+    font-size: 17px;
+    color: var(--ink-dim);
+    max-width: 600px;
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+  .hero-sub b{ color: var(--ink); font-weight: 600; }
+
+  .hero-stats{
+    display: flex;
+    gap: 0;
+    margin-bottom: 48px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .hero-stat{
+    flex: 1;
+    padding: 22px 24px 22px 0;
+    border-right: 1px solid var(--line);
+  }
+  .hero-stat:last-child{ border-right: none; padding-right: 0; }
+  .hero-stat:not(:first-child){ padding-left: 24px; }
+  .hero-stat .num{
+    font-family: var(--display);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    line-height: 1.1;
+  }
+  .hero-stat .lbl{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--slate);
+    margin-top: 6px;
+    display: block;
+  }
+
+  @media (max-width: 640px){
+    .hero-stats{ flex-direction: column; border: none; }
+    .hero-stat{ border: none !important; border-bottom: 1px solid var(--line) !important; padding: 18px 0 !important; }
+    .hero-stat:last-child{ border-bottom: none !important; }
+  }
+
+  .hero-cta{
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .btn{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    letter-spacing: 0.01em;
+    padding: 14px 24px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary{
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 0 0 0 var(--accent-glow);
+  }
+  .btn-primary:hover{
+    box-shadow: 0 0 24px var(--accent-glow);
+    transform: translateY(-1px);
+  }
+  .btn-ghost{
+    color: var(--ink-dim);
+    border: 1px solid var(--line);
+  }
+  .btn-ghost:hover{
+    border-color: var(--accent);
+    color: var(--ink);
+  }
+
+  /* ---------- SECTION SHARED ---------- */
+  section{
+    padding: 96px 0;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .sec-head{
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 52px;
+  }
+  .sec-num{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+  .sec-title{
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .sec-line{
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* ---------- EXPERIENCE ---------- */
+  .job{
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 32px;
+    padding: 34px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .job:first-of-type{ padding-top: 0; }
+  .job:last-of-type{ border-bottom: none; }
+  .job-period{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--slate);
+    padding-top: 4px;
+  }
+  .job-period .yr{ display:block; color: var(--ink-dim); margin-bottom: 4px; font-weight: 500; }
+  .job-role{
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .job-org{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--accent);
+    margin-bottom: 18px;
+  }
+  .job-org .loc{ color: var(--slate); }
+  .job ul{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+  .job li{
+    font-size: 14.5px;
+    color: var(--ink-dim);
+    position: relative;
+    padding-left: 20px;
+    line-height: 1.6;
+  }
+  .job li::before{
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 1px;
+    background: var(--slate-dim);
+  }
+  .job li b{ color: var(--ink); font-weight: 600; }
+
+  .metric-strip{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  .metric-chip{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    color: var(--good);
+    padding: 7px 12px;
+  }
+  .metric-chip .lbl{ color: var(--slate); }
+
+  @media (max-width: 640px){
+    .job{ grid-template-columns: 1fr; gap: 8px; }
+  }
+
+  /* ---------- PROJECTS ---------- */
+  .proj-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 720px){
+    .proj-grid{ grid-template-columns: 1fr; }
+  }
+  .proj-card{
+    border: 1px solid var(--line);
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .proj-card:hover{
+    border-color: var(--accent);
+    transform: translateY(-3px);
+  }
+  .proj-card.featured{
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 36px;
+    align-items: center;
+  }
+  @media (max-width: 720px){
+    .proj-card.featured{ grid-template-columns: 1fr; }
+  }
+  .proj-tag{
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+  }
+  .proj-title{
+    font-size: 20px;
+    font-weight: 600;
+    font-family: var(--display);
+    letter-spacing: -0.01em;
+  }
+  .proj-desc{
+    font-size: 14px;
+    color: var(--ink-dim);
+    line-height: 1.65;
+  }
+  .proj-stack{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 4px;
+  }
+  .stack-pill{
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--slate);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    padding: 4px 10px;
+  }
+  .proj-figure{
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    padding: 22px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--slate);
+  }
+  .proj-figure .num{
+    font-size: 30px;
+    color: var(--accent);
+    font-weight: 700;
+    font-family: var(--display);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .figure-row{
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .figure-row:last-child{ border-bottom: none; }
+  .figure-row .v{ color: var(--ink-dim); }
+
+  /* ---------- PUBLICATION ---------- */
+  .pub-card{
+    border: 1px solid var(--line);
+    background: radial-gradient(ellipse 600px 200px at 0% 0%, var(--accent-soft), transparent);
+    border-radius: 14px;
+    padding: 38px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  @media (max-width: 640px){
+    .pub-card{ grid-template-columns: 1fr; }
+  }
+  .pub-icon{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px 12px;
+    white-space: nowrap;
+    height: fit-content;
+  }
+  .pub-venue{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 9px;
+  }
+  .pub-title{
+    font-size: 21px;
+    font-weight: 600;
+    margin-bottom: 11px;
+    font-family: var(--display);
+    letter-spacing: -0.01em;
+  }
+  .pub-desc{ color: var(--ink-dim); font-size: 14.5px; margin-bottom: 16px; line-height: 1.65; }
+
+  /* ---------- SKILLS ---------- */
+  .skills-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px 56px;
+  }
+  @media (max-width: 640px){
+    .skills-grid{ grid-template-columns: 1fr; }
+  }
+  .skill-group-title{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--slate);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .skill-group-title::after{
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .skill-tags{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .skill-tag{
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 8px 13px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--ink-dim);
+    transition: all 0.2s;
+  }
+  .skill-tag:hover{
+    border-color: var(--accent);
+    color: var(--ink);
+    background: var(--accent-soft);
+  }
+
+  /* ---------- EDUCATION ---------- */
+  .edu-item{
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 32px;
+    padding: 26px 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .edu-item:last-child{ border-bottom: none; }
+  @media (max-width: 640px){
+    .edu-item{ grid-template-columns: 1fr; gap: 6px; }
+  }
+  .edu-period{ font-family: var(--mono); font-size: 12px; color: var(--slate); padding-top: 3px; }
+  .edu-degree{ font-size: 18px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .edu-school{ font-family: var(--mono); font-size: 12.5px; color: var(--accent); margin-bottom: 9px; }
+  .edu-detail{ font-size: 14px; color: var(--ink-dim); line-height: 1.6; }
+
+  .cert-row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 30px;
+  }
+  .cert-pill{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--slate);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 9px 15px;
+  }
+
+  /* ---------- CONTACT ---------- */
+  footer{
+    padding: 100px 0 70px;
+    text-align: center;
+  }
+  .contact-title{
+    font-family: var(--display);
+    font-size: clamp(2.2rem, 4.8vw, 3.6rem);
+    font-weight: 600;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+  }
+  .contact-title .accent-text{ color: var(--accent); }
+  .contact-sub{
+    color: var(--slate);
+    font-size: 15px;
+    max-width: 480px;
+    margin: 0 auto 44px;
+  }
+  .contact-links{
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 70px;
+  }
+  .foot-meta{
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--slate-dim);
+    border-top: 1px solid var(--line);
+    padding-top: 30px;
+  }
+
+  /* fade-in on scroll */
+  .reveal{
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.in{
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+    .reveal{ opacity: 1; transform: none; }
+  }
+
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+
+<div class="glow"></div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo"><span class="dot"></span>Abhishek Raut</div>
+    <div class="nav-links">
+      <a href="#work">Experience</a>
+      <a href="#projects">Projects</a>
+      <a href="#publication">Research</a>
+      <a href="#education">Education</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-eyebrow">● Open to Data Science roles · UK</div>
+
+    <h1 class="hero-title">Models that ship,<br>not just <span class="accent-text">notebooks that run.</span></h1>
+
+    <p class="hero-sub">I'm <b>Abhishek Raut</b>, a data scientist with 1.5 years of experience turning statistical models into decisions — forecasting pipelines, A/B experiments, and dashboards stakeholders actually use. Currently completing my <b>MSc in Data Science & Analytics</b> at the University of Leeds.</p>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num">−25%</span>
+        <span class="lbl">forecast variance, via XGBoost/LightGBM</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">−40%</span>
+        <span class="lbl">reconciliation errors, 5+ source ETL</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">222K+</span>
+        <span class="lbl">wells benchmarked, MSc dissertation</span>
+      </div>
+    </div>
+
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="mailto:raut.abhishek1010@gmail.com">Get in touch →</a>
+      <a class="btn btn-ghost" href="#work">View experience</a>
+    </div>
+  </header>
+
+  <!-- ===================== EXPERIENCE ===================== -->
+  <section id="work">
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <h2 class="sec-title">Experience</h2>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="job reveal">
+      <div class="job-period"><span class="yr">2024 — 2025</span>Jul – Aug</div>
+      <div>
+        <div class="job-role">Business Analyst / Data Scientist</div>
+        <div class="job-org">Univon Pvt Ltd <span class="loc">· Pune, India</span></div>
+        <ul>
+          <li>Deployed <b>XGBoost/LightGBM</b> forecasting models, reducing forecast variance by ~25% and saving 3 hrs/week — directly informing commercial planning for senior stakeholders.</li>
+          <li>Designed end-to-end <b>ETL pipelines</b> across 5+ sources, cutting reconciliation errors by ~40% and enabling reproducible, scalable ML workflows.</li>
+          <li>Ran <b>A/B testing</b> and quantitative model comparisons on hold-out sets, applying statistical rigour to select production-ready configurations.</li>
+          <li>Built <b>SQL + Power BI</b> dashboards translating model outputs into stakeholder-ready data stories, reducing reporting cycle by ~2 days.</li>
+          <li>Led UAT training for 15+ colleagues, reducing deployment issues by ~30% during research-to-production rollout.</li>
+        </ul>
+        <div class="metric-strip">
+          <div class="metric-chip"><span class="lbl">variance ↓</span> 25%</div>
+          <div class="metric-chip"><span class="lbl">errors ↓</span> 40%</div>
+          <div class="metric-chip"><span class="lbl">reporting ↓</span> 2 days</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="job reveal">
+      <div class="job-period"><span class="yr">2024</span>Jan – Jul</div>
+      <div>
+        <div class="job-role">Business Analyst Intern</div>
+        <div class="job-org">Univon Pvt Ltd <span class="loc">· Pune, India</span></div>
+        <ul>
+          <li>Identified 30+ <b>Oracle EPM</b> data mapping gaps; solutions reduced validation errors by 25% and cycle times by 15%.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="job reveal">
+      <div class="job-period"><span class="yr">2023</span>Apr – Sep</div>
+      <div>
+        <div class="job-role">Web Development Intern</div>
+        <div class="job-org">Construction Carrier Inc. <span class="loc">· Pune, India</span></div>
+        <ul>
+          <li>Optimised SQL schemas and pipelines across 50k+ records, reducing query latency by ~35% — foundational data engineering experience later applied to ML workflows.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROJECTS ===================== -->
+  <section id="projects">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2 class="sec-title">Projects</h2>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="proj-grid">
+
+      <div class="proj-card featured reveal">
+        <div>
+          <div class="proj-tag">MSc Dissertation · In Progress</div>
+          <div class="proj-title" style="margin-top:9px;">ML Feature Extraction & Clustering Pipeline</div>
+          <p class="proj-desc">An end-to-end benchmarking pipeline on the RxRx3 dataset, comparing feature extractors and dimensionality-reduction methods to support malaria transmission-blocking drug research — evaluated for cluster quality at scale.</p>
+          <div class="proj-stack">
+            <span class="stack-pill">Python</span>
+            <span class="stack-pill">ResNet50</span>
+            <span class="stack-pill">DINOv2</span>
+            <span class="stack-pill">UMAP</span>
+            <span class="stack-pill">HDBSCAN</span>
+          </div>
+        </div>
+        <div class="proj-figure">
+          <span class="num">222,000+</span>
+          wells analysed (RxRx3)
+          <div class="figure-row"><span>configurations tested</span><span class="v">20</span></div>
+          <div class="figure-row"><span>cluster separation</span><span class="v" style="color:var(--good)">+18%</span></div>
+          <div class="figure-row"><span>extractors × DR methods</span><span class="v">4 × 5</span></div>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-tag">Data Engineering</div>
+        <div class="proj-title">Real-Time Analytics Dashboard</div>
+        <p class="proj-desc">A real-time KPI dashboard ingesting three data sources via ETL, taking reporting from a daily cadence to near real-time for faster decision-making.</p>
+        <div class="proj-stack">
+          <span class="stack-pill">Flask</span>
+          <span class="stack-pill">PostgreSQL</span>
+          <span class="stack-pill">Pandas</span>
+          <span class="stack-pill">D3.js</span>
+        </div>
+      </div>
+
+      <div class="proj-card reveal">
+        <div class="proj-tag">Applied ML</div>
+        <div class="proj-title">Credit Risk Prediction Models</div>
+        <p class="proj-desc">Benchmarked three model architectures on SMOTE-balanced data, reaching 85%+ accuracy — the basis of a peer-reviewed publication on statistical rigour in risk modelling.</p>
+        <div class="proj-stack">
+          <span class="stack-pill">Random Forest</span>
+          <span class="stack-pill">XGBoost</span>
+          <span class="stack-pill">Neural Nets</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== PUBLICATION ===================== -->
+  <section id="publication">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2 class="sec-title">Research</h2>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="pub-card reveal">
+      <div class="pub-icon">PEER<br>REVIEWED</div>
+      <div>
+        <div class="pub-venue">AIEE Conference · January 2024</div>
+        <div class="pub-title">Loan Risk Prediction via Ensemble Learning</div>
+        <p class="pub-desc">Benchmarked Random Forest, XGBoost, and Neural Network architectures on SMOTE-balanced credit data, achieving 85%+ accuracy — demonstrating applied statistical rigour and data mining expertise in a financial risk context.</p>
+        <div class="proj-stack">
+          <span class="stack-pill">Random Forest</span>
+          <span class="stack-pill">XGBoost</span>
+          <span class="stack-pill">Neural Networks</span>
+          <span class="stack-pill">SMOTE</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SKILLS ===================== -->
+  <section id="skills">
+    <div class="sec-head">
+      <span class="sec-num">—</span>
+      <h2 class="sec-title">Toolkit</h2>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="skills-grid">
+      <div class="reveal">
+        <div class="skill-group-title">Programming & Tools</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Python</span>
+          <span class="skill-tag">scikit-learn</span>
+          <span class="skill-tag">Pandas / NumPy</span>
+          <span class="skill-tag">XGBoost</span>
+          <span class="skill-tag">LightGBM</span>
+          <span class="skill-tag">TensorFlow</span>
+          <span class="skill-tag">SQL</span>
+          <span class="skill-tag">R</span>
+          <span class="skill-tag">Git/GitHub</span>
+          <span class="skill-tag">Databricks</span>
+          <span class="skill-tag">Azure ML</span>
+          <span class="skill-tag">GCP</span>
+          <span class="skill-tag">Hadoop</span>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="skill-group-title">ML & Statistics</div>
+        <div class="skill-tags">
+          <span class="skill-tag">A/B Testing</span>
+          <span class="skill-tag">Predictive Modelling</span>
+          <span class="skill-tag">Clustering (k-means)</span>
+          <span class="skill-tag">UMAP</span>
+          <span class="skill-tag">Data Mining</span>
+          <span class="skill-tag">Feature Engineering</span>
+          <span class="skill-tag">Scalable ML Pipelines</span>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="skill-group-title">Data Engineering</div>
+        <div class="skill-tags">
+          <span class="skill-tag">ETL Pipelines</span>
+          <span class="skill-tag">PostgreSQL</span>
+          <span class="skill-tag">MongoDB</span>
+          <span class="skill-tag">Power BI</span>
+          <span class="skill-tag">Tableau</span>
+          <span class="skill-tag">RESTful APIs</span>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="skill-group-title">Working Style</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Data Storytelling</span>
+          <span class="skill-tag">Stakeholder Comms</span>
+          <span class="skill-tag">Research-to-Production</span>
+          <span class="skill-tag">Agile/Scrum</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== EDUCATION ===================== -->
+  <section id="education">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2 class="sec-title">Education</h2>
+      <div class="sec-line"></div>
+    </div>
+
+    <div class="edu-item reveal">
+      <div class="edu-period">2025 — Present</div>
+      <div>
+        <div class="edu-degree">MSc, Data Science and Analytics</div>
+        <div class="edu-school">University of Leeds, UK</div>
+        <div class="edu-detail">Dissertation: benchmarking 20 ML configurations (4 feature extractors × 5 DR methods) on the RxRx3 dataset (222,000+ wells), evaluated via Silhouette, Davies-Bouldin & Calinski-Harabasz metrics — directly analogous to large-scale A/B experimentation.</div>
+      </div>
+    </div>
+
+    <div class="edu-item reveal">
+      <div class="edu-period">2020 — 2024</div>
+      <div>
+        <div class="edu-degree">BSc, Computer Science <span class="mono" style="color:var(--accent); font-size:13px;">· GPA 9.34/10</span></div>
+        <div class="edu-school">Vishwakarma Institute of Information Technology, India</div>
+        <div class="edu-detail">Data Structures & Algorithms, Database Management Systems, Statistical Computing.</div>
+      </div>
+    </div>
+
+    <div class="cert-row reveal">
+      <span class="cert-pill">Data Science Job Simulation — Lloyds Banking Group</span>
+      <span class="cert-pill">100 Days of Code: Python Pro — Udemy</span>
+      <span class="cert-pill">Fortinet NSE 1 & NSE 3</span>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <footer id="contact">
+    <div class="contact-title">Let's talk <span class="accent-text">data</span>.</div>
+    <p class="contact-sub">Open to Data Scientist, Data Analyst, and BA/DS hybrid roles across the UK. No visa sponsorship required.</p>
+    <div class="contact-links">
+      <a class="btn btn-primary" href="mailto:raut.abhishek1010@gmail.com">raut.abhishek1010@gmail.com</a>
+      <a class="btn btn-ghost" href="tel:+447352679462">+44 7352 679462</a>
+      <a class="btn btn-ghost" href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a>
+    </div>
+    <div class="foot-meta">UK · NO VISA SPONSORSHIP REQUIRED · © 2026</div>
+  </footer>
+
+</div>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
