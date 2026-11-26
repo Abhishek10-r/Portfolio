@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Abhishek Raut, data analyst in London. MSc Data Science & Analytics (Leeds). Projects in credit risk, pricing, FP&A, product analytics and LLM evaluation.">
+<meta property="og:title" content="Abhishek Raut · Data analyst">
+<meta property="og:description" content="Lab records: projects in credit risk, pricing, FP&A, product analytics and LLM evaluation, each tested against a known truth.">
+<meta property="og:type" content="website">
+<style>html{color-scheme:light} body{margin:0} img{max-width:100%}</style>
+<title>Abhishek Raut</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Concept: a scientist's lab notebook. Graph-paper page, every project filed as a lab record with its measured result; the hero is a microscope field of view where visitors run the dissertation's clustering themselves. One accent (fluorescent magenta); the four fluorescence channels appear only inside the scope. */
+:root {
+  --paper: #F4F6F8;
+  --grid: rgba(16, 32, 64, .055);
+  --surface: #FFFFFF;
+  --ink: #0F1724;
+  --ink-soft: #505C6C;
+  --line: #D8DEE6;
+  --accent: #C8175F;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #FBE4EE;
+  --bar: #CCD4DE;
+  --scrim: rgba(8, 12, 20, .5);
+  --scope: #04060B;
+  --scope-line: rgba(220, 235, 255, .18);
+  --scope-ink: #DDE6F2;
+  --c1: #4FE0FF; --c2: #FF5AA8; --c3: #FFD24F; --c4: #74FFA8;
+  --display: 'Bricolage Grotesque', 'Segoe UI', Arial, sans-serif;
+  --body: 'Instrument Sans', 'Segoe UI', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+  --r: 16px;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0A0E15; --grid: rgba(200, 220, 255, .045); --surface: #111823; --ink: #E7ECF3; --ink-soft: #9AA6B7; --line: #222C3A;
+    --accent: #FF5C9C; --accent-ink: #14060C; --accent-soft: #3A1426; --bar: #2E3A4B; --scrim: rgba(0, 0, 0, .6); color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0A0E15; --grid: rgba(200, 220, 255, .045); --surface: #111823; --ink: #E7ECF3; --ink-soft: #9AA6B7; --line: #222C3A;
+  --accent: #FF5C9C; --accent-ink: #14060C; --accent-soft: #3A1426; --bar: #2E3A4B; --scrim: rgba(0, 0, 0, .6); color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  background-color: var(--paper); color: var(--ink); font-family: var(--body); font-size: 1rem; line-height: 1.6;
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--paper); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+h1, h2, h3 { font-family: var(--display); margin: 0; line-height: 1.05; text-wrap: balance; }
+h2 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 700; letter-spacing: -.03em; }
+h3 { font-size: 1.2rem; font-weight: 650; letter-spacing: -.01em; line-height: 1.2; }
+p { margin: 0; }
+.mono { font-family: var(--mono); font-size: .76rem; letter-spacing: .04em; color: var(--ink-soft); }
+.skip { position: absolute; left: -999px; top: 8px; background: var(--ink); color: var(--paper); padding: 8px 12px; border-radius: 6px; z-index: 60; }
+.skip:focus { left: 16px; }
+
+/* top bar */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--paper) 86%, transparent); backdrop-filter: blur(12px); border-bottom: 1px solid transparent; transition: border-color .2s; }
+.topbar.scrolled { border-bottom-color: var(--line); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+.mono-mark { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--ink); display: grid; place-items: center; font: 700 .8rem var(--display); letter-spacing: -.02em; position: relative; }
+.mono-mark::after { content: ""; position: absolute; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); right: -2px; top: 2px; }
+.brand b { font: 650 1rem var(--display); }
+.nav-links { display: flex; gap: 2px; list-style: none; margin: 0; padding: 0; }
+.nav-links a { display: block; padding: 6px 12px; border-radius: 999px; color: var(--ink-soft); text-decoration: none; font-size: .92rem; transition: color .2s, background .2s; }
+.nav-links a:hover { color: var(--ink); }
+.nav-links a.active { color: var(--ink); background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
+.avail { font-family: var(--mono); font-size: .72rem; display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-soft); white-space: nowrap; }
+.avail i { width: 7px; height: 7px; border-radius: 50%; background: #22B573; }
+.theme-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; display: grid; place-items: center; flex: none; }
+.theme-btn svg { width: 17px; height: 17px; }
+@media (max-width: 760px) { .nav-links, .avail { display: none; } }
+
+/* hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(28px, 5vw, 64px); align-items: center; padding-block: clamp(28px, 6vw, 72px) 40px; }
+.kicker { display: flex; gap: 10px; align-items: center; margin-bottom: 22px; }
+.kicker span.tag { font-family: var(--mono); font-size: .72rem; padding: 4px 9px; border: 1px solid var(--ink); border-radius: 4px; letter-spacing: .06em; }
+.hero h1 { font-size: clamp(2.7rem, 7.2vw, 5.6rem); font-weight: 800; letter-spacing: -.045em; line-height: .95; font-variation-settings: "opsz" 96; }
+.hero h1 .hl { position: relative; white-space: nowrap; color: var(--accent); }
+.hero h1 .hl svg { position: absolute; left: -2%; bottom: -.16em; width: 104%; height: .32em; overflow: visible; }
+.hero h1 .hl path { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; }
+@media (prefers-reduced-motion: no-preference) { .hero h1 .hl path { stroke-dasharray: 420; stroke-dashoffset: 420; animation: draw 1.1s .5s var(--ease) forwards; } @keyframes draw { to { stroke-dashoffset: 0; } } }
+.hero .intro { font-size: 1.12rem; color: var(--ink-soft); max-width: 50ch; margin-top: 28px; }
+.cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 30px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; border: 1px solid var(--ink); background: transparent; color: var(--ink); text-decoration: none; font: 600 .95rem var(--body); cursor: pointer; transition: transform .2s var(--ease), background .2s, color .2s; }
+.btn:hover { transform: translateY(-2px); }
+.btn.primary { background: var(--ink); color: var(--paper); }
+.btn.primary:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn .arr { transition: transform .2s var(--ease); }
+.btn:hover .arr { transform: translateX(3px); }
+
+/* scope */
+.scope-wrap { display: grid; gap: 14px; justify-items: center; }
+.scope { position: relative; width: min(100%, 480px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 50% 45%, #0C1424 0%, var(--scope) 70%); box-shadow: 0 0 0 10px var(--surface), 0 0 0 11px var(--line), 0 30px 60px -20px rgba(10, 20, 40, .45); overflow: hidden; max-width: 100%; }
+.scope canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.scope .reticle { position: absolute; inset: 0; pointer-events: none; }
+.scope .reticle line, .scope .reticle circle { stroke: var(--scope-line); fill: none; }
+.scope .scale { position: absolute; left: 50%; bottom: 13%; transform: translateX(-50%); display: grid; justify-items: center; gap: 4px; font-family: var(--mono); font-size: .64rem; color: var(--scope-ink); opacity: .8; }
+.scope .scale i { width: 48px; height: 3px; background: var(--scope-ink); }
+.scope .readout { position: absolute; left: 50%; top: 11%; transform: translateX(-50%); font-family: var(--mono); font-size: .7rem; color: var(--scope-ink); background: rgba(4, 6, 11, .6); padding: 5px 10px; border-radius: 999px; white-space: nowrap; border: 1px solid var(--scope-line); }
+.scope-ctrl { display: inline-flex; padding: 4px; border-radius: 999px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); gap: 2px; }
+.scope-ctrl button { font: 600 .84rem var(--body); border: 0; background: transparent; color: var(--ink-soft); padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: background .2s, color .2s; }
+.scope-ctrl button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+.legend span { font-family: var(--mono); font-size: .72rem; color: var(--ink-soft); display: inline-flex; align-items: center; gap: 6px; }
+.legend span i { width: 9px; height: 9px; border-radius: 50%; background: var(--sw); box-shadow: 0 0 0 1px rgba(0,0,0,.25); }
+.fig { font-family: var(--mono); font-size: .72rem; color: var(--ink-soft); text-align: center; max-width: 44ch; line-height: 1.5; }
+.fig b { color: var(--ink); font-weight: 500; }
+@media (max-width: 900px) { .hero { grid-template-columns: minmax(0, 1fr); } .scope { width: min(100%, 400px); } }
+
+/* measurements */
+.measures { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--line); margin-top: 24px; position: relative; }
+.measures::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 8px; background: repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 14px); opacity: .5; }
+.m { padding: 26px 18px 20px; border-left: 1px solid var(--line); display: grid; gap: 4px; align-content: start; }
+.m:first-child { border-left: 0; padding-left: 0; }
+.m b { font: 800 clamp(2rem, 4vw, 2.8rem) var(--display); letter-spacing: -.04em; line-height: 1; }
+.m b small { font: 500 .9rem var(--mono); color: var(--accent); letter-spacing: 0; margin-left: 4px; }
+.m span { color: var(--ink-soft); font-size: .9rem; line-height: 1.4; }
+@media (max-width: 760px) { .measures { grid-template-columns: repeat(2, minmax(0, 1fr)); } .m:nth-child(3) { border-left: 0; padding-left: 0; } .m:nth-child(n+3) { border-top: 1px solid var(--line); } }
+
+/* sections */
+section.block { padding-block: clamp(56px, 9vw, 104px) 24px; scroll-margin-top: 70px; }
+.head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 380px); gap: 24px; align-items: end; margin-bottom: 30px; }
+.head .eyebrow { font-family: var(--mono); font-size: .78rem; color: var(--accent); letter-spacing: .06em; margin-bottom: 10px; }
+.head p.sub { color: var(--ink-soft); }
+@media (max-width: 760px) { .head { grid-template-columns: minmax(0, 1fr); } }
+
+/* tabs */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 22px; }
+.tab { font: 600 .88rem var(--body); padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-soft); cursor: pointer; transition: all .2s; }
+.tab:hover { color: var(--ink); border-color: var(--ink-soft); }
+.tab[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.tab .n { font-family: var(--mono); font-size: .74rem; opacity: .75; margin-left: 5px; }
+
+/* records */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; grid-auto-flow: dense; }
+.card { position: relative; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; display: flex; flex-direction: column; gap: 10px; min-width: 0; cursor: pointer; font: inherit; color: inherit; overflow: hidden; transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .2s, opacity .3s var(--ease); }
+.card:hover { transform: translateY(-4px) rotate(-.25deg); box-shadow: 0 18px 40px -22px rgba(10, 20, 40, .35); border-color: var(--ink-soft); }
+.card.out { opacity: 0; transform: scale(.96); pointer-events: none; }
+.card.feature { grid-column: span 2; }
+@media (max-width: 640px) { .card.feature { grid-column: auto; } }
+.rec { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-family: var(--mono); font-size: .7rem; color: var(--ink-soft); letter-spacing: .04em; padding-bottom: 10px; border-bottom: 1px dashed var(--line); }
+.rec .stamp { color: var(--accent); border: 1px solid currentColor; border-radius: 4px; padding: 1px 6px; transform: rotate(-3deg); }
+.result { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+.result b { font: 800 clamp(2.2rem, 4vw, 2.9rem) var(--display); letter-spacing: -.045em; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+.card.feature .result b { font-size: clamp(2.8rem, 6vw, 4rem); color: var(--accent); }
+.result span { font-size: .85rem; color: var(--ink-soft); max-width: 26ch; line-height: 1.35; }
+.card p.sum { color: var(--ink-soft); font-size: .94rem; }
+.spark { display: flex; align-items: flex-end; gap: 4px; height: 38px; margin-top: auto; padding-top: 10px; }
+.spark i { flex: 1; max-width: 34px; border-radius: 3px 3px 0 0; background: var(--bar); min-height: 3px; transform-origin: bottom; transition: background .2s; }
+.spark i.hi { background: var(--accent); }
+.spark.flow { align-items: center; gap: 0; }
+.spark.flow i { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); max-width: none; }
+.spark.flow b { flex: 1; height: 1.5px; background: var(--bar); }
+.card .open { position: absolute; right: 18px; bottom: 18px; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--paper); font-size: .9rem; transform: scale(.6); opacity: 0; transition: transform .25s var(--ease), opacity .25s; }
+.card:hover .open, .card:focus-visible .open { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: no-preference) { .card:hover .spark i { animation: grow .5s var(--ease) both; } @keyframes grow { from { transform: scaleY(.25); } to { transform: none; } } }
+.card.hl { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.card.dim { opacity: .3; }
+
+/* drawer */
+.scrim { position: fixed; inset: 0; background: var(--scrim); z-index: 40; opacity: 0; transition: opacity .3s var(--ease); backdrop-filter: blur(2px); }
+.scrim.on { opacity: 1; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(580px, 100%); background: var(--surface); z-index: 41; border-left: 1px solid var(--line); transform: translateX(100%); transition: transform .4s var(--ease); display: flex; flex-direction: column; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); padding-right: env(safe-area-inset-right, 0px); }
+.drawer.on { transform: none; }
+.drawer-head { display: flex; justify-content: space-between; align-items: start; gap: 16px; padding: 24px 26px 18px; border-bottom: 1.5px solid var(--ink); }
+.drawer-head h3 { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; letter-spacing: -.03em; margin-top: 8px; }
+.close { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; font-size: 1.2rem; flex: none; }
+.drawer-body { overflow-y: auto; padding: 22px 26px 36px; display: grid; gap: 24px; }
+.meta { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.meta p.v { font-size: .95rem; margin-top: 3px; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.pill { font-family: var(--mono); font-size: .74rem; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--line); color: var(--ink); }
+.drawer-body .txt { color: var(--ink-soft); margin-top: 5px; }
+.demo { border-radius: var(--r); padding: 20px; background: var(--paper); border: 1px solid var(--line); }
+.demo-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.seg { display: inline-flex; border-radius: 999px; padding: 3px; gap: 2px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+.seg button { font: 600 .8rem var(--body); border: 0; background: transparent; color: var(--ink-soft); padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.bars { display: grid; gap: 12px; }
+.bar-row { display: grid; grid-template-columns: minmax(90px, 32%) 1fr 66px; gap: 12px; align-items: center; }
+.bar-row .bl { font-size: .86rem; color: var(--ink-soft); line-height: 1.3; }
+.track { position: relative; height: 24px; border-radius: 4px; background: color-mix(in srgb, var(--bar) 40%, transparent); overflow: hidden; }
+.fill { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 4px; background: var(--bar); transition: width .8s var(--ease); }
+.fill.hi { background: var(--accent); }
+.val { font-family: var(--mono); font-size: .82rem; font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; }
+.demo-note { font-size: .86rem; color: var(--ink-soft); margin-top: 12px; }
+.flow { display: flex; gap: 6px; flex-wrap: wrap; }
+.flow button { font: 600 .84rem var(--body); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); cursor: pointer; }
+.flow button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.links { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* instruments */
+.matrix { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; }
+.skill-group { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px; }
+.skill-group h3 { margin-bottom: 14px; display: flex; justify-content: space-between; align-items: baseline; }
+.skill-group h3 small { font: 400 .72rem var(--mono); color: var(--ink-soft); }
+.skill-list { display: flex; flex-wrap: wrap; gap: 7px; }
+.skill { font: 500 .86rem var(--body); padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); cursor: pointer; transition: all .2s; }
+.skill:hover { border-color: var(--ink-soft); }
+.skill[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.skill-group .extra { font-size: .82rem; color: var(--ink-soft); margin-top: 12px; }
+.skill-hint { margin-top: 16px; font-family: var(--mono); font-size: .8rem; color: var(--ink-soft); min-height: 1.6em; }
+
+/* timeline */
+.timeline { display: grid; gap: 0; border-top: 1.5px solid var(--ink); }
+.t-row { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 24px; padding-block: 24px; border-bottom: 1px solid var(--line); }
+.t-row .when { font-family: var(--mono); font-size: .8rem; color: var(--ink-soft); padding-top: 4px; }
+.t-row .when b { display: block; font: 700 1rem var(--display); color: var(--ink); letter-spacing: -.01em; margin-bottom: 2px; }
+.t-row h3 { font-size: 1.35rem; }
+.t-row .org { color: var(--ink-soft); margin-top: 4px; }
+.t-row ul { margin: 12px 0 0; padding-left: 1.1em; color: var(--ink-soft); }
+.t-row li { margin-bottom: 5px; }
+.t-row li::marker { color: var(--accent); }
+@media (max-width: 640px) { .t-row { grid-template-columns: minmax(0, 1fr); gap: 6px; } }
+
+/* contact */
+.contact { border-radius: 24px; background: var(--ink); color: var(--paper); padding: clamp(28px, 6vw, 64px); display: grid; gap: 26px; position: relative; overflow: hidden; }
+.contact::after { content: ""; position: absolute; right: -80px; top: -80px; width: 280px; height: 280px; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--paper) 25%, transparent); box-shadow: 0 0 0 40px color-mix(in srgb, var(--paper) 4%, transparent), 0 0 0 80px color-mix(in srgb, var(--paper) 3%, transparent); pointer-events: none; }
+.contact h2 { color: var(--paper); font-size: clamp(2.4rem, 7vw, 5rem); letter-spacing: -.045em; }
+.contact h2 em { font-style: normal; color: var(--accent); }
+.contact .sub { color: color-mix(in srgb, var(--paper) 72%, var(--ink)); max-width: 54ch; }
+.email-line { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.email { font: 500 clamp(1rem, 2.6vw, 1.5rem) var(--mono); color: var(--paper); user-select: all; word-break: break-all; border-bottom: 1.5px dashed color-mix(in srgb, var(--paper) 40%, transparent); padding-bottom: 4px; }
+.contact .btn { border-color: color-mix(in srgb, var(--paper) 40%, transparent); color: var(--paper); }
+.contact .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.copied { font-family: var(--mono); font-size: .8rem; color: #6BE3A6; }
+footer { padding-block: 30px 48px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-family: var(--mono); font-size: .74rem; color: var(--ink-soft); }
+
+@media (prefers-reduced-motion: reduce) { .card, .drawer, .scrim, .fill, .btn, .tab { transition: none !important; } }
+</style>
+</head>
+<body>
+
+
+<a class="skip" href="#main">Skip to content</a>
+<div class="topbar" id="topbar">
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="Abhishek Raut, home"><span class="mono-mark" aria-hidden="true">AR</span><b>Abhishek Raut</b></a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#work">Records</a></li>
+      <li><a href="#skills">Instruments</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <span class="avail"><i></i>Open to roles · London</span>
+      <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch to dark theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path id="theme-icon" d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap" id="main">
+  <header class="hero" id="top">
+    <div>
+      <div class="kicker"><span class="tag">DATA ANALYST</span><span class="mono">London, UK · hybrid or on-site</span></div>
+      <h1>I check every model against <span class="hl">the real answer.<svg viewBox="0 0 300 20" preserveAspectRatio="none" aria-hidden="true"><path d="M4 14 C 60 4, 120 18, 180 9 S 270 6, 296 12"/></svg></span></h1>
+      <p class="intro">I’m Abhishek, an MSc Data Science &amp; Analytics graduate from the University of Leeds with 1.5 years as an Oracle EPM consultant in finance. I turn messy finance, risk and operations data into numbers people can trust, and I test every method on data where the truth is known.</p>
+      <div class="cta">
+        <a class="btn primary" href="#work">Open the lab records <span class="arr">→</span></a>
+        <a class="btn" href="#contact">Get in touch</a>
+      </div>
+    </div>
+    <figure class="scope-wrap" style="margin:0">
+      <div class="scope" id="scope">
+        <canvas id="scope-canvas" aria-label="Animated microscope view of malaria cells being clustered" role="img"></canvas>
+        <svg class="reticle" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="36" stroke-width=".25" stroke-dasharray="1 1.6"/><line x1="50" y1="4" x2="50" y2="12" stroke-width=".3"/><line x1="50" y1="88" x2="50" y2="96" stroke-width=".3"/><line x1="4" y1="50" x2="12" y2="50" stroke-width=".3"/><line x1="88" y1="50" x2="96" y2="50" stroke-width=".3"/></svg>
+        <p class="readout" id="scope-readout">436 cells · unlabelled</p>
+        <div class="scale"><i></i>t = 20 min</div>
+      </div>
+      <div class="scope-ctrl" role="group" aria-label="Microscope view">
+        <button type="button" id="sv-raw" aria-pressed="true">Raw cells</button>
+        <button type="button" id="sv-km" aria-pressed="false">Run k-means</button>
+      </div>
+      <div class="legend" aria-label="Colour key, true drug condition">
+        <span style="--sw: var(--c1)"><i></i>DMSO</span><span style="--sw: var(--c2)"><i></i>TC04</span><span style="--sw: var(--c3)"><i></i>TC11</span><span style="--sw: var(--c4)"><i></i>TC39</span>
+      </div>
+      <figcaption class="fig"><b>Fig. 1, my dissertation.</b> Run k-means on balanced malaria cells: colour shows the true drug, position the cluster. Only TC39 gathers in one place (ARI 0.136).</figcaption>
+    </figure>
+  </header>
+
+  <div class="measures" aria-label="Highlights">
+    <div class="m"><b>MSc</b><span>Data Science &amp; Analytics, University of Leeds · Merit</span></div>
+    <div class="m"><b>40<small>%</small></b><span>fewer reconciliation errors across 5+ finance systems</span></div>
+    <div class="m"><b>11</b><span>projects tested against a known truth or hold-out</span></div>
+    <div class="m"><b>2</b><span>Microsoft certs: Power BI PL-300, Fabric DP-600</span></div>
+  </div>
+
+  <section class="block" id="work">
+    <div class="head">
+      <div><p class="eyebrow">// LAB RECORDS</p><h2>Things I measured</h2></div>
+      <p class="sub">Every project starts with a business question and ends with a number I checked. Open a record for the challenge, the outcome and a live chart.</p>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Project categories" id="tabs"></div>
+    <div class="grid" id="grid" role="tabpanel" aria-labelledby="tab-all"></div>
+  </section>
+
+  <section class="block" id="skills">
+    <div class="head">
+      <div><p class="eyebrow">// INSTRUMENTS</p><h2>What I work with</h2></div>
+      <p class="sub">Pick a skill to light up the records where I used it.</p>
+    </div>
+    <div class="matrix" id="matrix"></div>
+    <p class="skill-hint" id="skill-hint" aria-live="polite">No skill selected.</p>
+  </section>
+
+  <section class="block" id="experience">
+    <div class="head">
+      <div><p class="eyebrow">// EXPERIENCE &amp; STUDY</p><h2>Where I’ve worked</h2></div>
+    </div>
+    <div class="timeline">
+      <div class="t-row">
+        <p class="when"><b>2025 – 2026</b>Sep 2025 – Sep 2026</p>
+        <div><h3>MSc Data Science &amp; Analytics</h3><p class="org">University of Leeds, School of Mathematics · Merit</p>
+          <ul><li>Dissertation: unsupervised clustering of malaria microscopy images across 165+ pipelines.</li></ul></div>
+      </div>
+      <div class="t-row">
+        <p class="when"><b>2024 – 2025</b>Jan 2024 – Aug 2025 · Pune</p>
+        <div><h3>Oracle EPM Consultant, Univon</h3><p class="org">Intern, then full time · client: NH Holding LLC, UAE</p>
+          <ul>
+            <li>Replaced manual reconciliation across 5+ source systems with SQL and Python checks, cutting errors by 40%.</li>
+            <li>Built P&amp;L reporting and analysed client finance data in Oracle FCCS and Oracle Cloud.</li>
+            <li>Ran 20+ workshops with finance and technology teams to explain variances and agree fixes.</li>
+          </ul></div>
+      </div>
+      <div class="t-row">
+        <p class="when"><b>2024</b>Graduated Jun 2024</p>
+        <div><h3>BSc Computer Science</h3><p class="org">Vishwakarma Institute of Information Technology, Pune · GPA 9.34 / 10</p>
+          <ul><li>Published <i>Loan Risk Prediction</i>, a peer-reviewed conference paper (Jan 2024).</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="contact">
+    <div class="contact">
+      <p class="mono" style="color:inherit;opacity:.7">// CONTACT</p>
+      <h2>Let’s find the <em>real answer</em> in your data.</h2>
+      <p class="sub">I’m looking for data analyst, data scientist, business analyst and finance systems roles in London. Email is the quickest way to reach me.</p>
+      <div class="email-line">
+        <span class="email" id="email">raut.abhishek1010@gmail.com</span>
+        <button class="btn primary" type="button" id="copy-email">Copy email</button>
+        <span class="copied" id="copied" hidden>Copied</span>
+      </div>
+      <div class="email-line">
+        <a class="btn" href="https://www.linkedin.com/in/abhishek-raut-4a7606209/" target="_blank" rel="noopener">LinkedIn <span class="arr">↗</span></a>
+        <a class="btn" href="https://github.com/Abhishek10-r" target="_blank" rel="noopener">GitHub <span class="arr">↗</span></a>
+      </div>
+    </div>
+  </section>
+
+  <footer><span>Abhishek Raut · London, UK</span><span>Project data is synthetic or public, as each write-up explains.</span></footer>
+</main>
+
+<div class="scrim" id="scrim" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-title" hidden>
+  <div class="drawer-head">
+    <div><p class="mono" id="d-cat"></p><h3 id="d-title"></h3></div>
+    <button class="close" id="d-close" type="button" aria-label="Close record">×</button>
+  </div>
+  <div class="drawer-body">
+    <div class="meta">
+      <div><p class="mono">ROLE</p><p class="v" id="d-role"></p></div>
+      <div><p class="mono">DATA</p><p class="v" id="d-data"></p></div>
+    </div>
+    <div><p class="mono">STACK</p><div class="pills" id="d-stack"></div></div>
+    <div><p class="mono">CHALLENGE</p><p class="txt" id="d-challenge"></p></div>
+    <div class="demo" id="d-demo">
+      <div class="demo-top"><p class="mono" id="d-demo-title"></p><div class="seg" id="d-seg" role="group" aria-label="Chart view"></div></div>
+      <div class="bars" id="d-bars"></div>
+      <p class="demo-note" id="d-note"></p>
+    </div>
+    <div><p class="mono">OUTCOME</p><p class="txt" id="d-outcome"></p></div>
+    <div class="links" id="d-links"></div>
+  </div>
+</aside>
+
+<script>
+(() => {
+  const GH = 'https://github.com/Abhishek10-r';
+  const CATS = [
+    { id: 'all', name: 'All' },
+    { id: 'finance', name: 'Finance & risk' },
+    { id: 'insurance', name: 'Insurance' },
+    { id: 'product', name: 'Product & marketing' },
+    { id: 'ops', name: 'Operations' },
+    { id: 'ai', name: 'AI & research' }
+  ];
+  // views: [{name, bars:[{l, v, max, txt, hi}], note}]
+  const P = [
+    { id: 'dissertation', cat: ['ai'], label: 'Research · MSc dissertation', title: 'Malaria phenotype clustering',
+      sum: 'Can unsupervised ML tell which drug a malaria cell received, from microscopy alone?',
+      metric: ['0.277', 'best ARI, halved when balanced'], role: 'Solo researcher', data: '1,093 cells, BioImage Archive S-BIAD633',
+      stack: ['Python', 'ResNet50', 'PCA', 'UMAP', 't-SNE', 'k-means', 'HDBSCAN'], skills: ['Python', 'Clustering', 'Computer vision', 'Experiment design'],
+      challenge: 'Group fluorescence images of gametocytes by drug condition without labels, across 165+ pipelines of features, reductions and clustering methods, then stress-test the winner.',
+      outcome: 'PCA100 + k-means led with an ARI of 0.277, but balancing the classes halved it and supervised UMAP collapsed on held-out cells. The image features were the bottleneck, which points to self-supervised models such as DINOv2.',
+      demoTitle: 'Adjusted Rand index (0 = random, 1 = perfect)',
+      views: [
+        { name: 'Full data', bars: [{ l: 'PCA100 + k-means', v: .277, max: 1, txt: '0.277', hi: 1 }, { l: 'UMAP + k-means', v: .109, max: 1, txt: '0.109' }, { l: 't-SNE + HDBSCAN', v: 0, max: 1, txt: '−0.029' }], note: 'The winner looks reasonable, helped by one compound making up 57% of cells.' },
+        { name: 'Balanced', bars: [{ l: 'Full data', v: .277, max: 1, txt: '0.277' }, { l: 'Balanced, 109 per class', v: .136, max: 1, txt: '0.136', hi: 1 }], note: 'With classes balanced, the score falls 51%.' },
+        { name: 'Supervised', bars: [{ l: 'Training cells', v: .785, max: 1, txt: '0.785' }, { l: 'Held-out cells', v: .024, max: 1, txt: '0.024', hi: 1 }], note: 'Supervised UMAP at target weight 0.4 memorises the labels and fails on new cells.' }
+      ],
+      links: [['Interactive results', 'https://claude.ai/artifact/JYHNqmJZ3KZWEUbiEKABNi'], ['Slides', 'https://claude.ai/artifact/GQPhb9g6Uo2MDCC6PA6tvv']] },
+
+    { id: 'credit', cat: ['finance'], label: 'Credit risk', title: 'Consumer credit risk scoring',
+      sum: 'A transparent scorecard against gradient boosting, validated on a later loan vintage.',
+      metric: ['13.4%', 'actual defaults caught vs 10.9% predicted'], role: 'Solo project, builds on my published paper', data: '75,000 synthetic loans with known true PD',
+      stack: ['Python', 'scikit-learn', 'WoE / IV', 'Logistic regression', 'Gradient boosting'], skills: ['Python', 'Machine learning', 'Credit risk', 'Model monitoring'],
+      challenge: 'Build a probability-of-default model a lender could defend, and prove it still works on loans issued after the training period.',
+      outcome: 'Monitoring on the later vintage caught defaults rising to 13.4% while the model predicted 10.9%. Recalibration closed the gap without rebuilding the scorecard.',
+      demoTitle: 'Default rate on the later vintage',
+      views: [{ name: 'Monitoring', bars: [{ l: 'Model predicted', v: 10.9, max: 15, txt: '10.9%' }, { l: 'Actual', v: 13.4, max: 15, txt: '13.4%', hi: 1 }], note: 'A 2.5-point gap is the signal to recalibrate before losses build up.' }],
+      links: [['Code', GH + '/credit-risk-scoring']] },
+
+    { id: 'motor', cat: ['insurance'], label: 'Pricing', title: 'Motor insurance pricing',
+      sum: 'Poisson and Gamma GLMs against a GBM, then using the GBM to improve the GLM.',
+      metric: ['29%', 'under-priced segment found and fixed'], role: 'Solo project', data: '80,000 synthetic UK motor policies',
+      stack: ['Python', 'statsmodels', 'GLM', 'GBM', 'Gini', 'A/E'], skills: ['Python', 'Statistics', 'Machine learning', 'Pricing'],
+      challenge: 'Keep a transparent rating model that regulators and underwriters accept, while catching the risk patterns only a machine-learning model sees.',
+      outcome: 'The GBM exposed a segment the GLM under-priced by 29%. I added that interaction to the GLM, keeping it explainable and closing the gap.',
+      demoTitle: 'Segment price vs true risk',
+      views: [{ name: 'Before fix', bars: [{ l: 'GLM price', v: 71, max: 100, txt: '71' }, { l: 'True risk', v: 100, max: 100, txt: '100', hi: 1 }], note: 'Indexed so true risk = 100: the GLM charged 29% too little.' }],
+      links: [['Code', GH + '/motor-pricing']] },
+
+    { id: 'smart', cat: ['ops'], label: 'Energy', title: 'Smart-meter data flow performance',
+      sum: 'A partner scorecard for meter operators, with root causes and a recovery plan.',
+      metric: ['~1,400', 'installs recoverable'], role: 'Solo project', data: '125k installs, 249k industry flows (synthetic)',
+      stack: ['SQL', 'DuckDB', 'Python', 'Control charts'], skills: ['SQL', 'Python', 'Data quality', 'Stakeholder reporting'],
+      challenge: 'An install only counts towards the regulatory target once valid D0150 and D0149 flows arrive. Find which partners are slipping, why, and how many installs can be recovered.',
+      outcome: 'A p-chart flagged one partner’s drop from week 15, and 83% of another’s North West rejections came from MPAN mismatches. About 1,400 uncounted installs are recoverable.',
+      demoTitle: 'Flows on time vs 95% SLA',
+      views: [{ name: 'Partners', bars: [{ l: 'SLA', v: 95, max: 100, txt: '95%' }, { l: 'Partner C on time', v: 82, max: 100, txt: '82%', hi: 1 }, { l: 'Partner D complete', v: 96.8, max: 100, txt: '96.8%' }], note: 'Partner C sits 13 points under its SLA.' }],
+      links: [['Code', GH + '/smart-meter-flow-performance']] },
+
+    { id: 'enrich', cat: ['ai', 'finance'], label: 'LLM evaluation', title: 'Transaction enrichment evals',
+      sum: 'Can a prompt beat keyword rules at turning card descriptors into merchants and categories?',
+      metric: ['0%', 'rules accuracy on long-tail merchants'], role: 'Solo project', data: '2,000 synthetic UK card descriptors',
+      stack: ['Python', 'Claude API', 'LLM-as-judge', 'pytest'], skills: ['Python', 'LLM evaluation', 'Prompt design', 'Data quality'],
+      challenge: 'Descriptors like PAYPAL *SPOTIFY or TESCO PFS 4471 must map to a merchant and category customers trust. Measure where rules fail before reaching for an LLM.',
+      outcome: 'The rules baseline scored 71% overall but 0% on the long tail, and a NETFLIX descriptor matching the TFL rule sent 80 subscriptions to Transport. The harness now compares prompts on the same set.',
+      demoTitle: 'Keyword-rule baseline',
+      views: [{ name: 'Baseline', bars: [{ l: 'Known merchants', v: 94.3, max: 100, txt: '94.3%' }, { l: 'Coverage', v: 75, max: 100, txt: '75%' }, { l: 'Overall accuracy', v: 71, max: 100, txt: '71%' }, { l: 'Long-tail merchants', v: 0, max: 100, txt: '0%', hi: 1 }], note: 'LLM prompt results are being added next.' }],
+      links: [['Code', GH + '/transaction-enrichment-evals']] },
+
+    { id: 'mmm', cat: ['product'], label: 'Marketing science', title: 'Ecommerce marketing measurement',
+      sum: 'MMM, attribution and a geo-lift test, each checked against the true channel effects.',
+      metric: ['5.6%', 'hold-out error vs 8.5% baseline'], role: 'Solo project', data: 'Two years of simulated daily sales',
+      stack: ['Python', 'Bayesian regression', 'Adstock', 'Geo-lift'], skills: ['Python', 'Statistics', 'Experiment design', 'Forecasting'],
+      challenge: 'Tell a brand what each £1 of search, social, TV and affiliate spend really returns, and show the method isn’t just fitting noise.',
+      outcome: 'The model beat a naive baseline out of sample, and the true ROI fell inside the 90% interval for 3 of 4 channels.',
+      demoTitle: '12-week hold-out forecast error (MAPE)',
+      views: [{ name: 'Hold-out', bars: [{ l: 'Same day last week', v: 8.5, max: 10, txt: '8.5%' }, { l: 'Marketing mix model', v: 5.6, max: 10, txt: '5.6%', hi: 1 }], note: 'Lower is better.' }],
+      links: [['Code', GH + '/ecom-marketing-measurement']] },
+
+    { id: 'ab', cat: ['product'], label: 'Product analytics', title: 'Retention and A/B testing',
+      sum: 'Churn drivers, a risk score, and an experiment judged on value per user.',
+      metric: ['+£65', 'value per user, winning variant'], role: 'Solo project', data: 'Event data and a 24,000-user test (synthetic)',
+      stack: ['SQL', 'Python', 'Experiment design'], skills: ['SQL', 'Python', 'Experiment design', 'Statistics'],
+      challenge: 'Find who is about to churn and run a test that measures value, since a variant can win on conversion and still lose money.',
+      outcome: 'The top 20% of risk scores held 42% of churners, and the test was called on value per user, +£65, rather than conversion alone.',
+      demoTitle: 'Churners captured by targeting the top 20%',
+      views: [{ name: 'Targeting', bars: [{ l: 'Random 20% of users', v: 20, max: 50, txt: '20%' }, { l: 'Top 20% by risk score', v: 42, max: 50, txt: '42%', hi: 1 }], note: 'The score finds churners at about twice the random rate.' }],
+      links: [['GitHub', GH]] },
+
+    { id: 'saas', cat: ['finance'], label: 'FP&A', title: 'SaaS financial model',
+      sum: 'Unit economics in SQL, a 2027 budget, a three-statement model and an acquisition case.',
+      metric: ['8.5 mo', 'payback for partnerships vs 31'], role: 'Solo project', data: 'Synthetic care-sector SaaS and marketplace',
+      stack: ['SQL', 'Python', 'Three-statement model'], skills: ['SQL', 'Financial modelling', 'Python', 'Stakeholder reporting'],
+      challenge: 'Answer the founder’s questions: which growth channel works, what next year looks like, and whether an acquisition adds value.',
+      outcome: 'Partnerships pay back in 8.5 months against 31 for paid search, with LTV/CAC of 17.6 vs 2.4, because those providers start bigger and churn less.',
+      demoTitle: 'Channel economics',
+      views: [
+        { name: 'Payback', bars: [{ l: 'Paid search', v: 31, max: 35, txt: '31 mo' }, { l: 'Partnerships', v: 8.5, max: 35, txt: '8.5 mo', hi: 1 }], note: 'Months to earn back acquisition cost. Lower is better.' },
+        { name: 'LTV/CAC', bars: [{ l: 'Paid search', v: 2.4, max: 20, txt: '2.4×' }, { l: 'Partnerships', v: 17.6, max: 20, txt: '17.6×', hi: 1 }], note: 'Lifetime value per £1 of acquisition cost.' }
+      ],
+      links: [['Code', GH + '/care-saas-finance-model']] },
+
+    { id: 'bandit', cat: ['finance', 'ai'], label: 'Decision science', title: 'Securities-lending fee setting',
+      sum: 'Daily fee setting for 60 securities as a bandit problem, through a short squeeze.',
+      metric: ['94.7%', 'of oracle revenue captured'], role: 'Solo project', data: '60 securities × 250 simulated trading days',
+      stack: ['Python', 'Thompson sampling', 'Simulation'], skills: ['Python', 'Machine learning', 'Statistics'],
+      challenge: 'Charge too little and scarce names lose revenue; charge too much and nothing gets borrowed. The demand curve is unknown and shifts under stress.',
+      outcome: 'Thompson sampling captured 94.7% of perfect-information revenue against 59.2% for the static desk rule. My first two versions did worse than the rule, which taught me how much priors matter.',
+      demoTitle: 'Revenue captured, % of oracle',
+      views: [{ name: 'Policies', bars: [{ l: 'Static desk rule', v: 59.2, max: 100, txt: '59.2%' }, { l: 'Epsilon-greedy', v: 93.2, max: 100, txt: '93.2%' }, { l: 'Thompson sampling', v: 94.7, max: 100, txt: '94.7%', hi: 1 }], note: '' }],
+      links: [['Code', GH + '/seclending-bandit']] },
+
+    { id: 'ticker', cat: ['finance'], label: 'Equity research', title: 'Ticker-to-Thesis',
+      sum: 'A live app that turns a ticker into financials, valuation and an investment thesis.',
+      metric: ['Live', 'deployed on Streamlit'], role: 'Solo project, design and build', data: 'Public company financials',
+      stack: ['Python', 'Streamlit', 'Valuation models'], skills: ['Python', 'Financial modelling', 'Data visualisation'],
+      challenge: 'Make equity research repeatable: pull a company’s numbers, compare them with its industry and produce a pitch-ready view in minutes.',
+      outcome: 'A deployed app that anyone can open, with valuation, peer comparison and a written thesis per ticker.',
+      demoTitle: 'What the app produces', views: [{ name: 'Flow', flow: ['Ticker', 'Financials', 'Industry comparison', 'Valuation', 'Thesis'], note: 'Select a step to see what happens there.' }],
+      flowNotes: { 'Ticker': 'Enter any listed company’s ticker.', 'Financials': 'Income statement, balance sheet and cash flow are pulled and cleaned.', 'Industry comparison': 'Margins and growth are set against industry trends.', 'Valuation': 'Valuation models give a range, not a single number.', 'Thesis': 'A pitch-style summary of the investment case.' },
+      links: [['Open live app', 'https://ticker-to-thesis.streamlit.app'], ['Code', GH + '/ticker-to-thesis']] },
+
+    { id: 'adloop', cat: ['ai', 'product'], label: 'AI agents', title: 'AdLoop',
+      sum: 'A multi-agent marketing workflow with a human-in-the-loop review step.',
+      metric: ['5', 'agents in one reviewed loop'], role: 'Solo project, design and build', data: 'Campaign briefs',
+      stack: ['Python', 'Claude API', 'Agent orchestration'], skills: ['Python', 'Prompt design', 'LLM evaluation'],
+      challenge: 'Show how AI agents can take a marketing brief to finished copy while a person keeps control of what ships.',
+      outcome: 'Five specialised agents pass work along a loop, and a human approves or sends feedback before anything is final.',
+      demoTitle: 'The agent loop', views: [{ name: 'Flow', flow: ['Manager', 'Researcher', 'Strategist', 'Writer', 'Editor'], note: 'Select an agent to see its job.' }],
+      flowNotes: { 'Manager': 'Breaks the brief into tasks and routes them.', 'Researcher': 'Gathers audience and competitor context.', 'Strategist': 'Turns research into a message and angle.', 'Writer': 'Drafts the copy.', 'Editor': 'Checks tone and accuracy, then hands to a human for approval or feedback.' },
+      links: [['GitHub', GH]] }
+  ];
+
+  const SKILLS = {
+    'Analysis': ['SQL', 'Python', 'Statistics', 'Experiment design', 'Forecasting', 'Data quality'],
+    'Modelling': ['Machine learning', 'Clustering', 'Computer vision', 'Credit risk', 'Pricing', 'Model monitoring'],
+    'Finance & business': ['Financial modelling', 'Stakeholder reporting', 'Data visualisation'],
+    'AI': ['LLM evaluation', 'Prompt design']
+  };
+  const EXTRA = { 'Analysis': 'Also: Power BI (PL-300), Microsoft Fabric (DP-600), Tableau, Snowflake, Excel, Git', 'Finance & business': 'Also: Oracle EPM, Oracle FCCS, reconciliation, P&L reporting' };
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const catName = (id) => (CATS.find((c) => c.id === id) || {}).name || '';
+
+  /* theme */
+  const root = document.documentElement, themeBtn = $('#theme-btn'), icon = $('#theme-icon');
+  const MOON = 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z';
+  const SUN = 'M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 17a5 5 0 1 0 0-10 5 5 0 0 0 0 10z';
+  const isDark = () => root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const syncTheme = () => { const d = isDark(); icon.setAttribute('d', d ? SUN : MOON); themeBtn.setAttribute('aria-label', d ? 'Switch to light theme' : 'Switch to dark theme'); };
+  try { const t = localStorage.getItem('ar-theme'); if (t === 'dark' || t === 'light') root.dataset.theme = t; } catch (e) {}
+  syncTheme();
+  themeBtn.addEventListener('click', () => { const n = isDark() ? 'light' : 'dark'; root.dataset.theme = n; try { localStorage.setItem('ar-theme', n); } catch (e) {} syncTheme(); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncTheme);
+
+  /* nav */
+  const topbar = $('#topbar');
+  addEventListener('scroll', () => topbar.classList.toggle('scrolled', scrollY > 8), { passive: true });
+  const navLinks = [...document.querySelectorAll('#nav-links a')];
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) navLinks.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+    ['work', 'skills', 'experience', 'contact'].forEach((id) => io.observe(document.getElementById(id)));
+  }
+
+  /* tabs + records */
+  const tabsEl = $('#tabs'), grid = $('#grid');
+  let current = 'all';
+  CATS.forEach((c) => {
+    const count = c.id === 'all' ? P.length : P.filter((p) => p.cat.includes(c.id)).length;
+    const b = el('button', 'tab'); b.type = 'button'; b.id = 'tab-' + c.id; b.setAttribute('role', 'tab'); b.dataset.cat = c.id;
+    b.setAttribute('aria-selected', String(c.id === 'all')); b.tabIndex = c.id === 'all' ? 0 : -1;
+    b.append(c.name, el('span', 'n', String(count)));
+    tabsEl.append(b);
+  });
+  const tabs = [...tabsEl.children];
+  const cards = P.map((p, idx) => {
+    const c = el('button', 'card' + (idx === 0 ? ' feature' : '')); c.type = 'button'; c.dataset.id = p.id; c.setAttribute('aria-label', p.title + ': open record');
+    const rec = el('div', 'rec'); rec.append(el('span', null, 'REC-' + String(idx + 1).padStart(2, '0') + ' · ' + catName(p.cat[0]).toUpperCase()), el('span', 'stamp', p.label.split(' · ')[0].toUpperCase()));
+    const res = el('div', 'result'); res.append(el('b', null, p.metric[0]), el('span', null, p.metric[1]));
+    const sp = el('div', 'spark'); sp.setAttribute('aria-hidden', 'true');
+    const v0 = p.views[0];
+    if (v0.flow) { sp.classList.add('flow'); v0.flow.forEach((s, k) => { if (k) sp.append(el('b')); sp.append(el('i')); }); }
+    else { const mx = Math.max(...v0.bars.map((b) => b.v / b.max)) || 1; v0.bars.forEach((b) => { const i = el('i', b.hi ? 'hi' : ''); i.style.height = Math.max(8, (b.v / b.max) / mx * 100) + '%'; sp.append(i); }); }
+    c.append(rec, res, el('h3', null, p.title), el('p', 'sum', p.sum), sp, el('span', 'open', '→'));
+    c.addEventListener('click', () => openDrawer(p, c));
+    grid.append(c); return c;
+  });
+  const setTab = (id) => {
+    current = id;
+    tabs.forEach((t) => { const on = t.dataset.cat === id; t.setAttribute('aria-selected', String(on)); t.tabIndex = on ? 0 : -1; });
+    grid.setAttribute('aria-labelledby', 'tab-' + id);
+    cards.forEach((c, i) => {
+      const show = id === 'all' || P[i].cat.includes(id);
+      if (show) { c.hidden = false; requestAnimationFrame(() => c.classList.remove('out')); }
+      else { c.classList.add('out'); setTimeout(() => { if (c.classList.contains('out')) c.hidden = true; }, reduce ? 0 : 280); }
+    });
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => setTab(t.dataset.cat));
+    t.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; n.focus(); setTab(n.dataset.cat);
+    });
+  });
+
+  /* drawer */
+  const drawer = $('#drawer'), scrim = $('#scrim');
+  let lastFocus = null;
+  const renderView = (p, v) => {
+    const bars = $('#d-bars'); bars.replaceChildren(); $('#d-note').textContent = v.note || '';
+    if (v.flow) {
+      const f = el('div', 'flow'); f.setAttribute('role', 'group'); f.setAttribute('aria-label', p.demoTitle);
+      const out = el('p', 'demo-note');
+      v.flow.forEach((s, i) => {
+        const b = el('button', null, (i + 1) + '. ' + s); b.type = 'button'; b.setAttribute('aria-pressed', 'false');
+        b.addEventListener('click', () => { f.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); out.textContent = p.flowNotes[s]; $('#d-note').textContent = ''; });
+        f.append(b);
+      });
+      bars.append(f, out); return;
+    }
+    v.bars.forEach((b) => {
+      const row = el('div', 'bar-row'), track = el('div', 'track');
+      track.setAttribute('role', 'img'); track.setAttribute('aria-label', b.l + ': ' + b.txt);
+      const fill = el('div', 'fill' + (b.hi ? ' hi' : '')); track.append(fill);
+      row.append(el('p', 'bl', b.l), track, el('span', 'val', b.txt)); bars.append(row);
+      const w = Math.max(b.v > 0 ? 2 : 0, b.v / b.max * 100) + '%';
+      if (reduce) fill.style.width = w; else requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = w; }));
+    });
+  };
+  const openDrawer = (p, from) => {
+    lastFocus = from;
+    $('#d-cat').textContent = 'REC-' + String(P.indexOf(p) + 1).padStart(2, '0') + ' · ' + p.label.toUpperCase();
+    $('#d-title').textContent = p.title; $('#d-role').textContent = p.role; $('#d-data').textContent = p.data;
+    $('#d-challenge').textContent = p.challenge; $('#d-outcome').textContent = p.outcome; $('#d-demo-title').textContent = p.demoTitle.toUpperCase();
+    $('#d-stack').replaceChildren(...p.stack.map((s) => el('span', 'pill', s)));
+    const seg = $('#d-seg'); seg.replaceChildren(); seg.hidden = p.views.length < 2;
+    p.views.forEach((v, i) => {
+      const b = el('button', null, v.name); b.type = 'button'; b.setAttribute('aria-pressed', String(i === 0));
+      b.addEventListener('click', () => { seg.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); renderView(p, v); });
+      seg.append(b);
+    });
+    $('#d-links').replaceChildren(...p.links.map(([t, u], i) => { const a = el('a', 'btn' + (i === 0 ? ' primary' : ''), t + ' ↗'); a.href = u; a.target = '_blank'; a.rel = 'noopener'; return a; }));
+    drawer.hidden = false; scrim.hidden = false;
+    requestAnimationFrame(() => { drawer.classList.add('on'); scrim.classList.add('on'); renderView(p, p.views[0]); });
+    document.body.style.overflow = 'hidden'; $('#d-close').focus();
+    try { history.replaceState(null, '', '#' + p.id); } catch (e) {}
+  };
+  const closeDrawer = () => {
+    drawer.classList.remove('on'); scrim.classList.remove('on');
+    setTimeout(() => { drawer.hidden = true; scrim.hidden = true; }, reduce ? 0 : 400);
+    document.body.style.overflow = '';
+    try { history.replaceState(null, '', '#work'); } catch (e) {}
+    if (lastFocus) lastFocus.focus();
+  };
+  $('#d-close').addEventListener('click', closeDrawer);
+  scrim.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', (e) => {
+    if (drawer.hidden) return;
+    if (e.key === 'Escape') closeDrawer();
+    if (e.key === 'Tab') {
+      const f = [...drawer.querySelectorAll('button, a[href]')].filter((x) => x.offsetParent !== null);
+      if (!f.length) return;
+      if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+    }
+  });
+  const fromHash = P.find((p) => '#' + p.id === location.hash);
+  if (fromHash) setTimeout(() => openDrawer(fromHash, cards[P.indexOf(fromHash)]), 200);
+
+  /* instruments */
+  const matrix = $('#matrix'), hint = $('#skill-hint');
+  let picked = null;
+  Object.entries(SKILLS).forEach(([g, list]) => {
+    const box = el('div', 'skill-group'); const h = el('h3', null, g); h.append(el('small', null, list.length + ' skills')); box.append(h);
+    const wrap = el('div', 'skill-list');
+    list.forEach((s) => { const b = el('button', 'skill', s); b.type = 'button'; b.setAttribute('aria-pressed', 'false'); b.addEventListener('click', () => pickSkill(s === picked ? null : s)); wrap.append(b); });
+    box.append(wrap);
+    if (EXTRA[g]) box.append(el('p', 'extra', EXTRA[g]));
+    matrix.append(box);
+  });
+  const pickSkill = (s) => {
+    picked = s;
+    matrix.querySelectorAll('.skill').forEach((b) => b.setAttribute('aria-pressed', String(b.textContent === s)));
+    const hits = s ? P.filter((p) => p.skills.includes(s)) : [];
+    cards.forEach((c, i) => { c.classList.toggle('hl', !!s && hits.includes(P[i])); c.classList.toggle('dim', !!s && !hits.includes(P[i])); });
+    if (!s) { hint.textContent = 'No skill selected.'; return; }
+    if (current !== 'all') setTab('all');
+    hint.replaceChildren(s + ' → ' + hits.length + (hits.length === 1 ? ' record: ' : ' records: ') + hits.map((p) => p.title).join(', ') + '. ');
+    const a = el('a', null, 'View them'); a.href = '#work'; hint.append(a);
+  };
+
+  /* microscope: balanced cells (dissertation Table 5.2, one dot per two cells) */
+  const cv = $('#scope-canvas'), readout = $('#scope-readout'), bRaw = $('#sv-raw'), bKm = $('#sv-km');
+  if (cv && cv.getContext) {
+    const ctx = cv.getContext('2d');
+    const T = { DMSO: [29, 21, 44, 15], TC04: [45, 10, 16, 38], TC11: [35, 49, 19, 6], TC39: [16, 84, 9, 0] };
+    const COLS = { DMSO: '#4FE0FF', TC04: '#FF5AA8', TC11: '#FFD24F', TC39: '#74FFA8' };
+    const CENT = [[.33, .36], [.67, .36], [.33, .66], [.67, .66]];
+    const cells = [];
+    const rnd = Math.random, gauss = () => (rnd() + rnd() + rnd() - 1.5) / 1.5;
+    Object.entries(T).forEach(([cond, arr]) => arr.forEach((n, k) => { for (let i = 0; i < Math.round(n / 2); i++) {
+      const a = rnd() * 6.283, r = Math.sqrt(rnd()) * .36;
+      cells.push({ cond, k, rx: .5 + Math.cos(a) * r, ry: .5 + Math.sin(a) * r, cx: CENT[k][0] + gauss() * .12, cy: CENT[k][1] + gauss() * .1, s: .7 + rnd() * .6, ph: rnd() * 6.283, rot: rnd() * 3.14 });
+    } }));
+    const sprite = (col) => { const c = document.createElement('canvas'); c.width = c.height = 64; const g = c.getContext('2d'); const gr = g.createRadialGradient(32, 32, 2, 32, 32, 30); gr.addColorStop(0, col); gr.addColorStop(.45, col + 'AA'); gr.addColorStop(1, col + '00'); g.fillStyle = gr; g.fillRect(0, 0, 64, 64); g.fillStyle = 'rgba(255,255,255,.85)'; g.beginPath(); g.arc(30, 30, 3.2, 0, 6.283); g.fill(); return c; };
+    const SP = { raw: sprite('#9FB2CC') }; Object.entries(COLS).forEach(([k, v]) => { SP[k] = sprite(v); });
+    let W = 0, dpr = 1, mode = 0, target = 0, auto = !reduce, last = performance.now(), switchAt = performance.now() + 2600;
+    const size = () => { dpr = Math.min(2, devicePixelRatio || 1); W = cv.clientWidth; cv.width = W * dpr; cv.height = W * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+    size(); addEventListener('resize', size);
+    const setMode = (m, fromUser) => {
+      target = m; if (fromUser) auto = false;
+      bRaw.setAttribute('aria-pressed', String(m === 0)); bKm.setAttribute('aria-pressed', String(m === 1));
+      readout.textContent = m ? 'k-means, k = 4 · ARI 0.136' : '436 cells · unlabelled';
+      if (reduce) { mode = m; frame(performance.now()); }
+    };
+    bRaw.addEventListener('click', () => setMode(0, true));
+    bKm.addEventListener('click', () => setMode(1, true));
+    const easeIO = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+    const frame = (now) => {
+      const dt = Math.min(64, now - last); last = now;
+      if (auto && now > switchAt) { setMode(target ? 0 : 1, false); switchAt = now + (target ? 5200 : 3000); }
+      mode += (target - mode) * Math.min(1, dt / 650);
+      const m = easeIO(Math.max(0, Math.min(1, mode)));
+      ctx.clearRect(0, 0, W, W);
+      
+      cells.forEach((c) => {
+        const wob = reduce ? 0 : 1;
+        const x = (c.rx + (c.cx - c.rx) * m) * W + Math.sin(now / 1200 + c.ph) * 2 * wob;
+        const y = (c.ry + (c.cy - c.ry) * m) * W + Math.cos(now / 1400 + c.ph) * 2 * wob;
+        const sz = W * .046 * c.s;
+        ctx.globalAlpha = .6 + .35 * m;
+        ctx.drawImage(m > .45 ? SP[c.cond] : SP.raw, x - sz / 2, y - sz / 2, sz, sz);
+      });
+      ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1;
+      if (m > .6) { ctx.font = '500 ' + Math.max(10, W * .026) + 'px JetBrains Mono, monospace'; ctx.fillStyle = 'rgba(221,230,242,' + ((m - .6) * 2) + ')'; ctx.textAlign = 'center'; CENT.forEach(([cx, cy], k) => ctx.fillText('C' + k, cx * W, (cy - .14) * W)); }
+      if (!reduce) requestAnimationFrame(frame);
+    };
+    if (reduce) setMode(1, false); else requestAnimationFrame(frame);
+  }
+
+  /* copy email */
+  const copyBtn = $('#copy-email'), copied = $('#copied'), email = $('#email');
+  copyBtn.addEventListener('click', () => {
+    const ok = (t) => { copied.textContent = t; copied.hidden = false; setTimeout(() => { copied.hidden = true; }, 2200); };
+    const sel = () => { const r = document.createRange(); r.selectNodeContents(email); const s = getSelection(); s.removeAllRanges(); s.addRange(r); ok('Selected, press Ctrl+C'); };
+    try { navigator.clipboard.writeText(email.textContent).then(() => ok('Copied'), sel); } catch (e) { sel(); }
+  });
+})();
+</script>
+
+</body>
+</html>
